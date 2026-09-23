@@ -13,7 +13,7 @@ export const SNAPSHOT = {
     },
     {
       name: 'TouchPortal-HardwareMonitor',
-      description: 'Read Data from Open Hardware Monitor or Libre Hardware Monitor, get all data from the sensors as auto created state values.',
+      description: 'Touch Portal plugin with Libre Hardware Monitor built in - exposes every sensor as auto-created states. No third-party app required.',
       stars: 34,
       language: 'C#',
       url: 'https://github.com/spdermn02/TouchPortal-HardwareMonitor',

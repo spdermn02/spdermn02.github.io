@@ -5,8 +5,8 @@ Personal homepage for spdermn02: Touch Portal plugins & tools, plus the
 Live at <https://spdermn02.github.io>.
 
 Static HTML/CSS/JS with no build step and no dependencies. Repo stats load live from the GitHub
-and npm APIs. `snapshot.js` renders first and stays in place for any request that fails
-(e.g. GitHub's 60 req/hr unauthenticated rate limit).
+and npm APIs. Repo cards show a shields.io release-downloads badge. `snapshot.js` renders first
+and stays in place for any request that fails (e.g. GitHub's 60 req/hr unauthenticated rate limit).
 
 ## Run locally
 

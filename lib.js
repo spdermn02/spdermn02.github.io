@@ -53,6 +53,11 @@ export function formatCount(n) {
   return compact.format(n);
 }
 
+export function downloadsBadgeUrl(name) {
+  if (typeof name !== 'string' || !SAFE_NAME.test(name)) return null;
+  return `https://img.shields.io/github/downloads/${GITHUB_USER}/${encodeURIComponent(name)}/total?label=downloads&color=f5a524&labelColor=2a2e39&style=flat-square`;
+}
+
 export function sameRepos(a, b) {
   if (a.length !== b.length) return false;
   return a.every((repo, i) => {

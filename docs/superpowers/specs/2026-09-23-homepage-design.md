@@ -23,7 +23,8 @@ most-starred repositories and spotlights the Touch Portal Node API (`touchportal
 - **Stack:** static HTML/CSS/JS, no framework, no build step, no Jekyll. Served from repo root on
   `main`.
 - **External requests:** only `api.github.com`, `api.npmjs.org`, `registry.npmjs.org`,
-  `avatars.githubusercontent.com`, and Google Fonts. No third-party JS.
+  `avatars.githubusercontent.com`, `img.shields.io` (download badge images), and Google Fonts. No
+  third-party JS.
 - **Responsive:** works at 375px width with no horizontal scroll.
 - **Themes:** dark by default; light when `prefers-color-scheme: light`.
 
@@ -79,6 +80,7 @@ Full-width card with accent border, visually distinct from the grid.
   - Raw repo name in small mono text (so it's still searchable/recognizable).
   - Description, clamped to 3 lines. Missing description → omitted.
   - ★ star count and primary language (omitted if null).
+  - Release downloads badge (shields.io image; removed if it fails to load).
 - Grid: 3 columns ≥ 900px, 2 columns ≥ 600px, 1 column below.
 
 ### 4. Footer

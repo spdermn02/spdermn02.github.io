@@ -10,6 +10,7 @@ import {
   parseVersion,
   fetchJson,
   sameRepos,
+  downloadsBadgeUrl,
 } from './lib.js';
 
 // All API-derived text goes through textContent; never parse HTML strings here.
@@ -47,6 +48,19 @@ function repoCard(repo) {
   const meta = el('div', 'deck-meta');
   meta.append(stat('★', formatCount(repo.stars), 'stars'));
   if (repo.language) meta.append(el('span', 'deck-lang', repo.language));
+  const badgeUrl = downloadsBadgeUrl(repo.name);
+  if (badgeUrl) {
+    const badge = document.createElement('img');
+    badge.className = 'deck-badge';
+    badge.src = badgeUrl;
+    badge.alt = 'downloads';
+    badge.height = 20;
+    badge.loading = 'lazy';
+    badge.decoding = 'async';
+    badge.referrerPolicy = 'no-referrer';
+    badge.addEventListener('error', () => badge.remove());
+    meta.append(badge);
+  }
   card.append(meta);
   return card;
 }

@@ -7,6 +7,7 @@ import {
   pickTopRepos,
   formatCount,
   sameRepos,
+  downloadsBadgeUrl,
 } from '../lib.js';
 
 const raw = (overrides = {}) => ({
@@ -165,4 +166,18 @@ test('sameRepos returns false when a field differs at any index', () => {
   assert.equal(sameRepos([repo({ language: 'JavaScript' })], [repo({ language: 'Go' })]), false);
   assert.equal(sameRepos([repo({ url: 'https://github.com/a/b' })], [repo({ url: 'https://github.com/a/c' })]), false);
   assert.equal(sameRepos([repo({ name: 'A' })], [repo({ name: 'B' })]), false);
+});
+
+test('downloadsBadgeUrl returns a shields.io URL for a safe repo name', () => {
+  assert.equal(
+    downloadsBadgeUrl('TouchPortal_Discord_Plugin'),
+    'https://img.shields.io/github/downloads/spdermn02/TouchPortal_Discord_Plugin/total?label=downloads&color=f5a524&labelColor=2a2e39&style=flat-square',
+  );
+});
+
+test('downloadsBadgeUrl returns null for unsafe or non-string names', () => {
+  assert.equal(downloadsBadgeUrl('../evil'), null);
+  assert.equal(downloadsBadgeUrl('a/b'), null);
+  assert.equal(downloadsBadgeUrl(42), null);
+  assert.equal(downloadsBadgeUrl(null), null);
 });
