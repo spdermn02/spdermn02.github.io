@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://avatars.githubusercontent.com; connect-src https://api.github.com https://api.npmjs.org https://registry.npmjs.org; base-uri 'none'; form-action 'none'">
+  <title>Jameson · spdermn02</title>
+  <meta name="description" content="Touch Portal plugins and tools by Jameson (spdermn02), including the Touch Portal Node API.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jameson · spdermn02">
+  <meta property="og:description" content="Touch Portal plugins and tools, including the Touch Portal Node API.">
+  <meta property="og:url" content="https://spdermn02.github.io/">
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/4458464?v=4&amp;s=400">
+  <meta name="theme-color" content="#0e0f13">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <img class="avatar" src="https://avatars.githubusercontent.com/u/4458464?v=4&amp;s=192"
+           width="96" height="96" alt="Jameson's avatar">
+      <div class="hero-text">
+        <h1>Jameson</h1>
+        <p class="handle">@spdermn02</p>
+        <p class="tagline">Touch Portal plugins &amp; tools</p>
+      </div>
+      <a class="icon-btn" href="https://github.com/spdermn02" rel="noopener" aria-label="spdermn02 on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </header>
+
+    <main>
+      <noscript>
+        <p class="noscript">Repo stats load with JavaScript.
+          <a href="https://github.com/spdermn02?tab=repositories">Browse spdermn02's repos on GitHub</a>.</p>
+      </noscript>
+
+      <section class="featured" aria-labelledby="featured-title">
+        <p class="eyebrow">Featured library</p>
+        <h2 id="featured-title">Touch Portal Node API</h2>
+        <code class="repo-sub">touchportal-node-api</code>
+        <p id="featured-desc" class="featured-desc"></p>
+        <div class="install">
+          <code id="install-cmd">npm install touchportal-api</code>
+          <button id="copy-btn" class="copy-btn" type="button" hidden>Copy</button>
+        </div>
+        <div class="featured-stats">
+          <span id="featured-stars"></span>
+          <span id="featured-downloads"></span>
+          <span id="featured-version" class="version"></span>
+        </div>
+        <div class="featured-links">
+          <a class="btn btn-primary" href="https://www.npmjs.com/package/touchportal-api" rel="noopener">npm</a>
+          <a class="btn" href="https://github.com/spdermn02/touchportal-node-api" rel="noopener">GitHub</a>
+          <a class="btn" href="https://github.com/spdermn02/touchportal-node-api#readme" rel="noopener">Docs</a>
+        </div>
+      </section>
+
+      <section aria-labelledby="repos-title">
+        <h2 id="repos-title" class="section-title">Top repos</h2>
+        <div id="repo-grid" class="deck-grid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="https://github.com/spdermn02?tab=repositories" rel="noopener">All repos on GitHub →</a>
+      <p id="data-note" class="data-note"></p>
+    </footer>
+  </div>
+</body>
+</html>
