@@ -9,6 +9,7 @@ import {
   parseDownloads,
   parseVersion,
   fetchJson,
+  sameRepos,
 } from './lib.js';
 
 // All API-derived text goes through textContent; never parse HTML strings here.
@@ -50,7 +51,10 @@ function repoCard(repo) {
   return card;
 }
 
+let shownRepos = null;
+
 function renderRepos(repos) {
+  shownRepos = repos;
   $('repo-grid').replaceChildren(...repos.map(repoCard));
 }
 
@@ -61,7 +65,7 @@ function renderFeatured({ stars, description }) {
 
 function renderDownloads(count) {
   $('featured-downloads').replaceChildren(
-    stat('⬇', `${formatCount(count)}/mo`, 'npm downloads last month'));
+    stat('⬇', `${formatCount(count)}/mo`, 'npm downloads'));
 }
 
 function renderVersion(version) {
@@ -96,7 +100,7 @@ function loadLive() {
   fetchJson(API.repos).then((json) => {
     const repos = pickTopRepos(json);
     if (repos?.length) {
-      renderRepos(repos);
+      if (!sameRepos(repos, shownRepos)) renderRepos(repos);
       renderDataNote(true);
     }
   });

@@ -1,7 +1,7 @@
 # spdermn02.github.io Homepage — Design
 
 **Date:** 2026-09-23
-**Status:** Approved design, pending spec review
+**Status:** Approved; implemented (see the plan for the final file layout)
 
 ## Goal
 
@@ -30,11 +30,16 @@ most-starred repositories and spotlights the Touch Portal Node API (`touchportal
 ## File Layout
 
 ```
-index.html     markup, meta + Open Graph tags, font links
+index.html     markup, CSP, meta + Open Graph tags, font links
 styles.css     design tokens, layout, dark/light themes, motion
-app.js         snapshot data, fetch, normalize, render
+app.js         DOM rendering, copy button, live fetches (only file touching the DOM)
+lib.js         pure helpers: repo filtering/sorting, name formatting, URL safety, parsers, fetch timeout
+snapshot.js    SNAPSHOT data rendered first and kept when a fetch fails
+favicon.svg    tab icon
+package.json   test/serve scripts, no dependencies
+tests/         node:test unit tests for lib.js and snapshot.js
 .nojekyll      disable Jekyll processing
-README.md      short description of the site and how to run it locally
+README.md      what the site is, local dev, snapshot refresh
 ```
 
 ## Page Sections
@@ -84,7 +89,7 @@ Full-width card with accent border, visually distinct from the grid.
 
 ## Data Flow
 
-1. `app.js` contains a `SNAPSHOT` object captured on 2026-09-23: top repos (name, description,
+1. `snapshot.js` contains a `SNAPSHOT` object captured on 2026-09-23: top repos (name, description,
    stars, language, url, pushed_at), node-api stars/description, npm downloads (190/month), and
    npm version (4.0.0).
 2. On `DOMContentLoaded`, render the page from `SNAPSHOT` immediately.
@@ -143,7 +148,7 @@ Full-width card with accent border, visually distinct from the grid.
 
 ## Testing
 
-Manual — this is a 4-file static site with no build.
+Unit tests (`npm test`) cover lib.js and the snapshot; the steps below are the browser checks.
 
 1. Serve locally (`python3 -m http.server`) and verify:
    - Dark and light themes (toggle OS / devtools emulation).

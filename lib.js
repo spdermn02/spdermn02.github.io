@@ -53,6 +53,20 @@ export function formatCount(n) {
   return compact.format(n);
 }
 
+export function sameRepos(a, b) {
+  if (a.length !== b.length) return false;
+  return a.every((repo, i) => {
+    const other = b[i];
+    return (
+      repo.name === other.name &&
+      repo.stars === other.stars &&
+      repo.description === other.description &&
+      repo.language === other.language &&
+      repo.url === other.url
+    );
+  });
+}
+
 const SEMVER = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/;
 
 export function parseFeatured(json) {

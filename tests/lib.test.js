@@ -6,6 +6,7 @@ import {
   normalizeRepo,
   pickTopRepos,
   formatCount,
+  sameRepos,
 } from '../lib.js';
 
 const raw = (overrides = {}) => ({
@@ -138,4 +139,30 @@ test('formatCount compacts large numbers', () => {
   assert.equal(formatCount(999), '999');
   assert.equal(formatCount(1000), '1K');
   assert.equal(formatCount(1234), '1.2K');
+});
+
+const repo = (overrides = {}) => ({
+  name: 'Example',
+  description: 'An example',
+  stars: 10,
+  language: 'JavaScript',
+  url: 'https://github.com/spdermn02/Example',
+  ...overrides,
+});
+
+test('sameRepos returns true for identical repo lists', () => {
+  assert.equal(sameRepos([repo(), repo({ name: 'Other' })], [repo(), repo({ name: 'Other' })]), true);
+  assert.equal(sameRepos([], []), true);
+});
+
+test('sameRepos returns false when lengths differ', () => {
+  assert.equal(sameRepos([repo()], [repo(), repo({ name: 'Other' })]), false);
+});
+
+test('sameRepos returns false when a field differs at any index', () => {
+  assert.equal(sameRepos([repo({ stars: 10 })], [repo({ stars: 11 })]), false);
+  assert.equal(sameRepos([repo({ description: 'a' })], [repo({ description: 'b' })]), false);
+  assert.equal(sameRepos([repo({ language: 'JavaScript' })], [repo({ language: 'Go' })]), false);
+  assert.equal(sameRepos([repo({ url: 'https://github.com/a/b' })], [repo({ url: 'https://github.com/a/c' })]), false);
+  assert.equal(sameRepos([repo({ name: 'A' })], [repo({ name: 'B' })]), false);
 });

@@ -73,7 +73,9 @@ a { color: var(--accent); }
   background: var(--surface); border: 1px solid var(--border); color: var(--text);
 }
 .icon-btn svg { width: 22px; height: 22px; fill: currentColor; }
-.icon-btn:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .icon-btn:hover { border-color: var(--accent); }
+}
 
 /* Featured */
 .featured {
@@ -126,7 +128,9 @@ a { color: var(--accent); }
   background: var(--surface-raised); border: 1px solid var(--border);
   color: var(--text); text-decoration: none; font-weight: 500;
 }
-.btn:hover { border-color: var(--accent); }
+@media (hover: hover) {
+  .btn:hover { border-color: var(--accent); }
+}
 .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 
 /* Deck grid */
@@ -144,7 +148,9 @@ a { color: var(--accent); }
   color: var(--text); text-decoration: none;
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
-.deck-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+@media (hover: hover) {
+  .deck-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+}
 .deck-card:active {
   transform: translateY(4px);
   box-shadow: 0 2px 0 var(--key-edge), 0 4px 10px rgb(0 0 0 / 0.14);

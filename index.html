@@ -11,7 +11,8 @@
   <meta property="og:description" content="Touch Portal plugins and tools, including the Touch Portal Node API.">
   <meta property="og:url" content="https://spdermn02.github.io/">
   <meta property="og:image" content="https://avatars.githubusercontent.com/u/4458464?v=4&amp;s=400">
-  <meta name="theme-color" content="#0e0f13">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e0f13">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f4f0">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +48,7 @@
         <p id="featured-desc" class="featured-desc"></p>
         <div class="install">
           <code id="install-cmd">npm install touchportal-api</code>
-          <button id="copy-btn" class="copy-btn" type="button" hidden>Copy</button>
+          <button id="copy-btn" class="copy-btn" type="button" hidden aria-live="polite">Copy</button>
         </div>
         <div class="featured-stats">
           <span id="featured-stars"></span>
