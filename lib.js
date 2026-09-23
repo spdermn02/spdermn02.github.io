@@ -52,3 +52,34 @@ export function pickTopRepos(rawList, { exclude = FEATURED_REPO, limit = 6 } = {
 export function formatCount(n) {
   return compact.format(n);
 }
+
+const SEMVER = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/;
+
+export function parseFeatured(json) {
+  if (!json || json.name !== FEATURED_REPO || !Number.isFinite(json.stargazers_count)) return null;
+  return { stars: json.stargazers_count, description: cleanString(json.description) };
+}
+
+export function parseDownloads(json) {
+  const n = json?.downloads;
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+export function parseVersion(json) {
+  const v = json?.version;
+  return typeof v === 'string' && SEMVER.test(v) ? v : null;
+}
+
+export async function fetchJson(url, { timeoutMs = 5000, fetchImpl = globalThis.fetch } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetchImpl(url, { signal: controller.signal });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
