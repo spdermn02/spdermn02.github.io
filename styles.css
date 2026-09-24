@@ -184,12 +184,11 @@ a { color: var(--accent); }
 }
 .deck-lang { color: var(--text-muted); }
 .deck-badge { height: 20px; width: auto; display: block; border-radius: 4px; }
-.deck-badges { display: inline-flex; gap: 6px; margin-left: auto; }
+.deck-badges { display: inline-flex; gap: 6px; margin-left: auto; flex: none; }
 
 /* More for Touch Portal */
 #more { margin-top: 56px; }
 .more-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 900px) { .more-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .more-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px;
   border-radius: 12px; background: var(--surface); border: 1px solid var(--border);
@@ -202,6 +201,11 @@ a { color: var(--accent); }
 .more-desc {
   flex: 1 1 240px; min-width: 0; color: var(--text-muted); font-size: 0.9rem;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+@media (min-width: 600px) {
+  .more-row { flex-wrap: nowrap; }
+  .more-name { flex: none; white-space: nowrap; }
+  .more-desc { flex: 1 1 auto; min-width: 0; }
 }
 
 /* Footer */
