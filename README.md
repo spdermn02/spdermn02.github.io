@@ -5,8 +5,10 @@ Personal homepage for spdermn02: Touch Portal plugins & tools, plus the
 Live at <https://spdermn02.github.io>.
 
 Static HTML/CSS/JS with no build step and no dependencies. Repo stats load live from the GitHub
-and npm APIs. Repo cards show a shields.io release-downloads badge. `snapshot.js` renders first
-and stays in place for any request that fails (e.g. GitHub's 60 req/hr unauthenticated rate limit).
+and npm APIs. Repo cards show shields.io downloads/release badges, a "More for Touch Portal" list
+rounds out the rest of the plugins below the grid, and there's a Ko-fi link in the header and
+footer for anyone who wants to chip in. `snapshot.js` renders first and stays in place for any
+request that fails (e.g. GitHub's 60 req/hr unauthenticated rate limit).
 
 ## Run locally
 
@@ -33,6 +35,8 @@ npm test        # node:test, Node 18+
 | `snapshot.js` | Fallback data rendered before live data arrives |
 | `tests/` | Unit tests for `lib.js` and `snapshot.js` |
 | `favicon.svg` | Tab icon |
+| `tools/og-card.html` | Source for the social share image |
+| `og.png` | Social share image |
 | `package.json` | `test` / `serve` scripts only, no dependencies |
 | `.nojekyll` | Serve files as-is (skip Jekyll) |
 | `docs/superpowers/` | Design spec and implementation plan (also served publicly by Pages) |
@@ -51,3 +55,8 @@ gh api 'users/spdermn02/repos?per_page=100&type=owner' | jq '[.[]
 
 Paste the result into `SNAPSHOT.repos`, update `featured.stars`, `npm.downloads`, `npm.version`,
 and `date`, then run `npm test`.
+
+## Share image
+
+To refresh `og.png`: edit `tools/og-card.html`, serve the repo locally (`npm run serve`), then
+screenshot the page at a 1200×630 viewport and save the result over `og.png` at the repo root.

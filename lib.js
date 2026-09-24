@@ -39,14 +39,29 @@ export function normalizeRepo(raw) {
   };
 }
 
+function sortAndStrip(repos) {
+  return repos
+    .sort((a, b) => b.stars - a.stars || b.pushedAt.localeCompare(a.pushedAt))
+    .map(({ fork, archived, ...repo }) => repo);
+}
+
 export function pickTopRepos(rawList, { exclude = FEATURED_REPO, limit = 6 } = {}) {
   if (!Array.isArray(rawList)) return null;
-  return rawList
+  const repos = rawList
     .map(normalizeRepo)
-    .filter((r) => r && !r.fork && !r.archived && r.name !== exclude)
-    .sort((a, b) => b.stars - a.stars || b.pushedAt.localeCompare(a.pushedAt))
-    .slice(0, limit)
-    .map(({ fork, archived, ...repo }) => repo);
+    .filter((r) => r && !r.fork && !r.archived && r.name !== exclude);
+  return sortAndStrip(repos).slice(0, limit);
+}
+
+const TOUCHPORTAL_NAME = /^touchportal/i;
+
+export function pickMoreRepos(rawList, topNames) {
+  if (!Array.isArray(rawList)) return null;
+  const exclude = new Set([FEATURED_REPO, ...topNames]);
+  const repos = rawList
+    .map(normalizeRepo)
+    .filter((r) => r && !r.fork && !r.archived && !exclude.has(r.name) && TOUCHPORTAL_NAME.test(r.name));
+  return sortAndStrip(repos);
 }
 
 export function formatCount(n) {
@@ -56,6 +71,11 @@ export function formatCount(n) {
 export function downloadsBadgeUrl(name) {
   if (typeof name !== 'string' || !SAFE_NAME.test(name)) return null;
   return `https://img.shields.io/github/downloads/${GITHUB_USER}/${encodeURIComponent(name)}/total?label=downloads&color=f5a524&labelColor=2a2e39&style=flat-square`;
+}
+
+export function releaseBadgeUrl(name) {
+  if (typeof name !== 'string' || !SAFE_NAME.test(name)) return null;
+  return `https://img.shields.io/github/v/release/${GITHUB_USER}/${encodeURIComponent(name)}?label=release&color=f5a524&labelColor=2a2e39&style=flat-square`;
 }
 
 export function sameRepos(a, b) {

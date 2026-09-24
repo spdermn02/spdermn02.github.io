@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>og card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #0e0f13;
+    --surface: #171920;
+    --surface-raised: #1f222b;
+    --text: #eceef3;
+    --text-muted: #9aa0ad;
+    --border: #2a2e39;
+    --accent: #f5a524;
+    --font-sans: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; width: 1200px; height: 630px; overflow: hidden;
+    background: var(--bg); color: var(--text); font-family: var(--font-sans);
+  }
+  .card {
+    position: relative; width: 1200px; height: 630px; padding: 72px 80px;
+    display: flex; flex-direction: column; justify-content: center;
+    background:
+      radial-gradient(60% 80% at 100% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%),
+      radial-gradient(50% 70% at 0% 100%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 60%),
+      var(--bg);
+  }
+  .eyebrow {
+    margin: 0 0 18px; font-family: var(--font-mono); font-size: 20px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+  }
+  h1 {
+    margin: 0; font-size: 112px; line-height: 1; font-weight: 700;
+    letter-spacing: -0.03em; color: var(--text);
+  }
+  .tagline { margin: 22px 0 0; font-size: 34px; color: var(--text); font-weight: 500; }
+  .handle {
+    margin: 18px 0 0; font-family: var(--font-mono); font-size: 24px; color: var(--text-muted);
+  }
+  .tiles { display: flex; gap: 18px; margin-top: 48px; }
+  .tile {
+    display: flex; flex-direction: column; gap: 6px; min-width: 190px;
+    padding: 18px 20px; border-radius: 16px;
+    background: linear-gradient(180deg, var(--surface-raised), var(--surface));
+    border: 1px solid var(--border);
+    box-shadow: 0 5px 0 #08090c, 0 10px 20px rgb(0 0 0 / 0.25);
+  }
+  .tile-name { font-size: 20px; font-weight: 700; }
+  .tile-star { font-family: var(--font-mono); font-size: 15px; color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">Touch Portal plugins &amp; tools</p>
+    <h1>Jameson</h1>
+    <p class="tagline">Plugins, icon packs &amp; the Node API for Touch Portal</p>
+    <p class="handle">spdermn02.github.io</p>
+    <div class="tiles">
+      <div class="tile">
+        <span class="tile-name">Discord</span>
+        <span class="tile-star">★ release</span>
+      </div>
+      <div class="tile">
+        <span class="tile-name">Hardware Monitor</span>
+        <span class="tile-star">★ release</span>
+      </div>
+      <div class="tile">
+        <span class="tile-name">Dynamic Icons</span>
+        <span class="tile-star">★ release</span>
+      </div>
+      <div class="tile">
+        <span class="tile-name">Node API</span>
+        <span class="tile-star">★ npm</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

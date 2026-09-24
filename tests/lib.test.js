@@ -8,6 +8,8 @@ import {
   formatCount,
   sameRepos,
   downloadsBadgeUrl,
+  releaseBadgeUrl,
+  pickMoreRepos,
 } from '../lib.js';
 
 const raw = (overrides = {}) => ({
@@ -180,4 +182,64 @@ test('downloadsBadgeUrl returns null for unsafe or non-string names', () => {
   assert.equal(downloadsBadgeUrl('a/b'), null);
   assert.equal(downloadsBadgeUrl(42), null);
   assert.equal(downloadsBadgeUrl(null), null);
+});
+
+test('releaseBadgeUrl returns a shields.io release URL for a safe repo name', () => {
+  assert.equal(
+    releaseBadgeUrl('TouchPortal_Discord_Plugin'),
+    'https://img.shields.io/github/v/release/spdermn02/TouchPortal_Discord_Plugin?label=release&color=f5a524&labelColor=2a2e39&style=flat-square',
+  );
+});
+
+test('releaseBadgeUrl returns null for unsafe or non-string names', () => {
+  assert.equal(releaseBadgeUrl('../evil'), null);
+  assert.equal(releaseBadgeUrl('a/b'), null);
+  assert.equal(releaseBadgeUrl(42), null);
+  assert.equal(releaseBadgeUrl(null), null);
+});
+
+test('pickMoreRepos returns null for non-arrays', () => {
+  assert.equal(pickMoreRepos({ message: 'API rate limit exceeded' }), null);
+  assert.equal(pickMoreRepos(null), null);
+});
+
+test('pickMoreRepos returns [] when nothing qualifies', () => {
+  assert.deepEqual(pickMoreRepos([], []), []);
+  assert.deepEqual(pickMoreRepos([raw({ name: 'aoc2019' })], []), []);
+});
+
+test('pickMoreRepos keeps only touchportal-prefixed repos, excluding forks, archived, featured, and topNames', () => {
+  const result = pickMoreRepos([
+    raw({ name: 'TouchPortal_Keep', stargazers_count: 1 }),
+    raw({ name: 'aoc2019', stargazers_count: 100 }),
+    raw({ name: 'spdermn02.github.io', stargazers_count: 100 }),
+    raw({ name: 'TouchPortal_Forked', stargazers_count: 100, fork: true }),
+    raw({ name: 'TouchPortal_Old', stargazers_count: 100, archived: true }),
+    raw({ name: 'touchportal-node-api', stargazers_count: 100 }),
+    raw({ name: 'TouchPortal_InTop', stargazers_count: 100 }),
+  ], ['TouchPortal_InTop']);
+  assert.deepEqual(result.map((r) => r.name), ['TouchPortal_Keep']);
+});
+
+test('pickMoreRepos is case-insensitive on the touchportal prefix', () => {
+  const result = pickMoreRepos([raw({ name: 'touchportal-lowercase', stargazers_count: 1 })], []);
+  assert.deepEqual(result.map((r) => r.name), ['touchportal-lowercase']);
+});
+
+test('pickMoreRepos sorts by stars desc, ties by most recent push, and strips fork/archived', () => {
+  const result = pickMoreRepos([
+    raw({ name: 'TouchPortal_Low', stargazers_count: 1 }),
+    raw({ name: 'TouchPortal_TieOld', stargazers_count: 5, pushed_at: '2024-01-01T00:00:00Z' }),
+    raw({ name: 'TouchPortal_High', stargazers_count: 9 }),
+    raw({ name: 'TouchPortal_TieNew', stargazers_count: 5, pushed_at: '2026-01-01T00:00:00Z' }),
+  ], []);
+  assert.deepEqual(result.map((r) => r.name),
+    ['TouchPortal_High', 'TouchPortal_TieNew', 'TouchPortal_TieOld', 'TouchPortal_Low']);
+  assert.ok(!('fork' in result[0]) && !('archived' in result[0]));
+});
+
+test('pickMoreRepos has no limit', () => {
+  const many = Array.from({ length: 20 }, (_, i) =>
+    raw({ name: `TouchPortal_Repo${i}`, stargazers_count: i }));
+  assert.equal(pickMoreRepos(many, []).length, 20);
 });

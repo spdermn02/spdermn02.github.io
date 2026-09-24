@@ -5,12 +5,14 @@ import {
   displayName,
   formatCount,
   pickTopRepos,
+  pickMoreRepos,
   parseFeatured,
   parseDownloads,
   parseVersion,
   fetchJson,
   sameRepos,
   downloadsBadgeUrl,
+  releaseBadgeUrl,
 } from './lib.js';
 
 // All API-derived text goes through textContent; never parse HTML strings here.
@@ -23,6 +25,7 @@ const API = {
 };
 
 const $ = (id) => document.getElementById(id);
+const released = new Set(SNAPSHOT.released);
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -39,6 +42,29 @@ function stat(icon, value, label) {
   return wrap;
 }
 
+function badge(url, alt) {
+  const img = document.createElement('img');
+  img.className = 'deck-badge';
+  img.src = url;
+  img.alt = alt;
+  img.height = 20;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  img.referrerPolicy = 'no-referrer';
+  img.addEventListener('error', () => img.remove());
+  return img;
+}
+
+function badges(repo) {
+  if (!released.has(repo.name)) return null;
+  const wrap = el('span', 'deck-badges');
+  const downloadsUrl = downloadsBadgeUrl(repo.name);
+  if (downloadsUrl) wrap.append(badge(downloadsUrl, 'downloads'));
+  const releaseUrl = releaseBadgeUrl(repo.name);
+  if (releaseUrl) wrap.append(badge(releaseUrl, 'latest release'));
+  return wrap;
+}
+
 function repoCard(repo) {
   const card = el('a', 'deck-card');
   card.href = repo.url;
@@ -48,21 +74,33 @@ function repoCard(repo) {
   const meta = el('div', 'deck-meta');
   meta.append(stat('★', formatCount(repo.stars), 'stars'));
   if (repo.language) meta.append(el('span', 'deck-lang', repo.language));
-  const badgeUrl = downloadsBadgeUrl(repo.name);
-  if (badgeUrl) {
-    const badge = document.createElement('img');
-    badge.className = 'deck-badge';
-    badge.src = badgeUrl;
-    badge.alt = 'downloads';
-    badge.height = 20;
-    badge.loading = 'lazy';
-    badge.decoding = 'async';
-    badge.referrerPolicy = 'no-referrer';
-    badge.addEventListener('error', () => badge.remove());
-    meta.append(badge);
-  }
+  const b = badges(repo);
+  if (b) meta.append(b);
   card.append(meta);
   return card;
+}
+
+function moreRow(repo) {
+  const row = el('a', 'more-row');
+  row.href = repo.url;
+  row.rel = 'noopener';
+  row.append(el('span', 'more-name', displayName(repo.name)));
+  if (repo.description) row.append(el('span', 'more-desc', repo.description));
+  const b = badges(repo);
+  if (b) row.append(b);
+  return row;
+}
+
+let shownMore = null;
+
+function renderMore(repos) {
+  shownMore = repos;
+  $('more-list').replaceChildren(...repos.map((repo) => {
+    const li = document.createElement('li');
+    li.append(moreRow(repo));
+    return li;
+  }));
+  $('more').hidden = repos.length === 0;
 }
 
 let shownRepos = null;
@@ -116,6 +154,8 @@ function loadLive() {
     if (repos?.length) {
       if (!sameRepos(repos, shownRepos)) renderRepos(repos);
       renderDataNote(true);
+      const more = pickMoreRepos(json, repos.map((r) => r.name));
+      if (Array.isArray(more) && !sameRepos(more, shownMore)) renderMore(more);
     }
   });
   fetchJson(API.featured).then((json) => {
@@ -133,6 +173,7 @@ function loadLive() {
 }
 
 renderRepos(SNAPSHOT.repos);
+renderMore(SNAPSHOT.more);
 renderFeatured(SNAPSHOT.featured);
 renderDownloads(SNAPSHOT.npm.downloads);
 renderVersion(SNAPSHOT.npm.version);

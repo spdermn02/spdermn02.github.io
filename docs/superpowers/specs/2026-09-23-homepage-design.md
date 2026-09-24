@@ -37,6 +37,8 @@ app.js         DOM rendering, copy button, live fetches (only file touching the 
 lib.js         pure helpers: repo filtering/sorting, name formatting, URL safety, parsers, fetch timeout
 snapshot.js    SNAPSHOT data rendered first and kept when a fetch fails
 favicon.svg    tab icon
+og.png         social share image (1200x630)
+tools/         source for the share image (og-card.html)
 package.json   test/serve scripts, no dependencies
 tests/         node:test unit tests for lib.js and snapshot.js
 .nojekyll      disable Jekyll processing
@@ -51,6 +53,7 @@ README.md      what the site is, local dev, snapshot refresh
 - "Jameson" as the display name; `@spdermn02` handle beneath.
 - Tagline: "Touch Portal plugins & tools".
 - GitHub profile link (icon button, inline SVG).
+- Ko-fi support link (icon + label button, inline SVG), grouped with the GitHub link.
 
 ### 2. Featured: touchportal-node-api
 
@@ -81,11 +84,24 @@ Full-width card with accent border, visually distinct from the grid.
   - Description, clamped to 3 lines. Missing description → omitted.
   - ★ star count and primary language (omitted if null).
   - Release downloads badge (shields.io image; removed if it fails to load).
+  - Latest-release badge (shields.io image; only for repos that ship GitHub releases, removed if
+    it fails to load).
 - Grid: 3 columns ≥ 900px, 2 columns ≥ 600px, 1 column below.
+
+### 3b. More for Touch Portal
+
+- A flat list (below the Top Repos grid) of the remaining `touchportal`-prefixed, non-fork,
+  non-archived repos — i.e. everything eligible that didn't make the top-6 cut, plus
+  `touchportal-node-api` excluded since it's already featured. Sorted the same way as the grid:
+  stars desc, ties broken by most recent push. No limit — every qualifying repo gets a row.
+  Section (and its heading) is hidden entirely when the list is empty.
+- Each row links to the repo and shows its display name, description (omitted if null), and —
+  only for repos that ship GitHub releases — the same downloads + release badges as the grid.
 
 ### 4. Footer
 
 - "All repos on GitHub →" linking to `https://github.com/spdermn02?tab=repositories`.
+- "Support on Ko-fi ☕" linking to `https://ko-fi.com/spdermn02`.
 - Small muted note: "Stats live from GitHub & npm" (or "Stats as of <snapshot date>" when the
   live fetch failed).
 
@@ -164,6 +180,6 @@ Unit tests (`npm test`) cover lib.js and the snapshot; the steps below are the b
 
 ## Out of Scope
 
-- Blog, projects beyond the top 6, contact form, analytics.
+- Blog, contact form, analytics.
 - Manual theme toggle (OS preference only).
 - Custom domain.

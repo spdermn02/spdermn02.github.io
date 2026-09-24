@@ -10,7 +10,11 @@
   <meta property="og:title" content="Jameson · spdermn02">
   <meta property="og:description" content="Touch Portal plugins and tools, including the Touch Portal Node API.">
   <meta property="og:url" content="https://spdermn02.github.io/">
-  <meta property="og:image" content="https://avatars.githubusercontent.com/u/4458464?v=4&amp;s=400">
+  <meta property="og:image" content="https://spdermn02.github.io/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Jameson · Touch Portal plugins &amp; tools">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e0f13">
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f4f0">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -30,9 +34,21 @@
         <p class="handle">@spdermn02</p>
         <p class="tagline">Touch Portal plugins &amp; tools</p>
       </div>
-      <a class="icon-btn" href="https://github.com/spdermn02" rel="noopener" aria-label="spdermn02 on GitHub">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
-      </a>
+      <div class="hero-actions">
+        <a class="icon-btn" href="https://github.com/spdermn02" rel="noopener" aria-label="spdermn02 on GitHub">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+        </a>
+        <a class="kofi-btn" href="https://ko-fi.com/spdermn02" rel="noopener" aria-label="Support Jameson on Ko-fi">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9h13v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V9Z"/>
+            <path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17v-2h1.5a.5.5 0 0 0 0-1H17v-2Z"/>
+            <path d="M5.5 20h10v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1Z"/>
+            <path d="M8 3.5c0 .8-1 .8-1 1.6s1 .8 1 1.6M12 3.5c0 .8-1 .8-1 1.6s1 .8 1 1.6"
+                  fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <span class="kofi-label">Support on Ko-fi</span>
+        </a>
+      </div>
     </header>
 
     <main>
@@ -66,10 +82,18 @@
         <h2 id="repos-title" class="section-title">Top repos</h2>
         <div id="repo-grid" class="deck-grid"></div>
       </section>
+
+      <section id="more" aria-labelledby="more-title">
+        <h2 id="more-title" class="section-title">More for Touch Portal</h2>
+        <ul id="more-list" class="more-list"></ul>
+      </section>
     </main>
 
     <footer class="footer">
-      <a href="https://github.com/spdermn02?tab=repositories" rel="noopener">All repos on GitHub →</a>
+      <div class="footer-links">
+        <a href="https://github.com/spdermn02?tab=repositories" rel="noopener">All repos on GitHub →</a>
+        <a href="https://ko-fi.com/spdermn02" rel="noopener">Support on Ko-fi ☕</a>
+      </div>
       <p id="data-note" class="data-note"></p>
     </footer>
   </div>
