@@ -106,10 +106,14 @@ function setupHold() {
     count = 0;
     valueSpan.textContent = '0';
   };
-  btn.addEventListener('pointerdown', start);
+  btn.addEventListener('pointerdown', (e) => {
+    btn.setPointerCapture?.(e.pointerId);
+    start();
+  });
   btn.addEventListener('pointerup', stop);
   btn.addEventListener('pointercancel', stop);
   btn.addEventListener('pointerleave', stop);
+  btn.addEventListener('contextmenu', (e) => e.preventDefault());
   btn.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
     if (e.repeat) return;
@@ -165,11 +169,23 @@ function renderDemoDeck() {
   );
 }
 
+let activeToast = null;
+let toastTimer = null;
+
 function showToast() {
+  if (activeToast) {
+    clearTimeout(toastTimer);
+    activeToast.remove();
+  }
   const toast = el('div', 'toast', 'Page 2 unlocked 🕷️');
   toast.setAttribute('role', 'status');
   document.body.append(toast);
-  setTimeout(() => toast.remove(), 3000);
+  activeToast = toast;
+  toastTimer = setTimeout(() => {
+    toast.remove();
+    activeToast = null;
+    toastTimer = null;
+  }, 3000);
 }
 
 function flipPage() {
