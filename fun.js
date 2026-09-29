@@ -63,10 +63,12 @@ function setupMic() {
   let muted = false;
   let holdTimer = null;
   let dropTriggered = false;
+  let keyHeld = false;
   btn.setAttribute('aria-pressed', 'false');
 
   const startHold = () => {
     if (holdTimer) return;
+    dropTriggered = false;
     holdTimer = setTimeout(() => {
       holdTimer = null;
       dropTriggered = true;
@@ -80,23 +82,45 @@ function setupMic() {
       holdTimer = null;
     }
   };
+  const toggleMute = () => {
+    muted = !muted;
+    btn.setAttribute('aria-pressed', String(muted));
+    btn.classList.toggle('is-muted', muted);
+    valueSpan.textContent = muted ? 'Muted' : 'Live';
+  };
+  const isActivateKey = (e) => e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter';
 
+  // Pointer: primary button only; the click that follows release does the toggle (unless a drop fired).
   btn.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
     btn.setPointerCapture?.(e.pointerId);
     startHold();
   });
   btn.addEventListener('pointerup', cancelHold);
   btn.addEventListener('pointercancel', cancelHold);
   btn.addEventListener('pointerleave', cancelHold);
+  btn.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Keyboard: suppress the native click (Enter fires it on keydown and every repeat) and toggle on keyup.
   btn.addEventListener('keydown', (e) => {
-    if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
+    if (!isActivateKey(e)) return;
+    e.preventDefault();
     if (e.repeat) return;
-    if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') startHold();
+    keyHeld = true;
+    startHold();
   });
   btn.addEventListener('keyup', (e) => {
-    if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') cancelHold();
+    if (!isActivateKey(e)) return;
+    e.preventDefault();
+    cancelHold();
+    if (!keyHeld) return;
+    keyHeld = false;
+    if (!dropTriggered) toggleMute();
   });
-  btn.addEventListener('blur', cancelHold);
+  btn.addEventListener('blur', () => {
+    cancelHold();
+    keyHeld = false;
+  });
   btn.addEventListener('animationend', (e) => {
     if (e.animationName === 'mic-drop') btn.classList.remove('mic-drop');
   });
@@ -105,10 +129,7 @@ function setupMic() {
       dropTriggered = false;
       return;
     }
-    muted = !muted;
-    btn.setAttribute('aria-pressed', String(muted));
-    btn.classList.toggle('is-muted', muted);
-    valueSpan.textContent = muted ? 'Muted' : 'Live';
+    toggleMute();
   });
   return btn;
 }
@@ -318,9 +339,9 @@ function setupAvatarSpider() {
 
 // Console hello: a little ASCII spider, once per page load.
 const SPIDER_ART = [
-  '   /\\_/\\',
-  '  ( o.o )',
-  ' > ^  ^ <',
+  '  /\\ .-. /\\',
+  ' //\\(o o)/\\\\',
+  '//  /)_(\\  \\\\',
 ].join('\n');
 
 function logConsoleHello() {

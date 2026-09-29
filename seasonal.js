@@ -1,4 +1,4 @@
-// October spooky mode. Loaded before app.js/fun.js so the class is on <html> before first paint.
+// October spooky mode. Loaded first so the class is set before the other modules run.
 // Preview any time with ?spooky.
 
 import { isSpooky } from './lib.js';
