@@ -1,19 +1,45 @@
-// Demo deck (a tiny taste of what the plugins do) + the Konami easter egg.
-// No DOM parsing of API/user strings here; every node is built with createElement/textContent.
+// Demo deck (a tiny taste of what the plugins do) + a few easter eggs.
+// No DOM parsing of API/user strings here; every node is built with createElement/textContent
+// (or createElementNS for the decorative spiders).
 
-import { cycle, gaugeStep, drift, KONAMI, konamiMatcher } from './lib.js';
+import { cycle, gaugeStep, drift, KONAMI, konamiMatcher, rapidClicks } from './lib.js';
 
 const STATUSES = ['Online', 'Idle', 'Do Not Disturb'];
 const STATUS_ICON = { Online: '🟢', Idle: '🌙', 'Do Not Disturb': '⛔' };
 const SCENES = ['Scene 1', 'Scene 2', 'Scene 3'];
 const HOLD_TICK_MS = 150;
 const CPU_TICK_MS = 2000;
+const MIC_HOLD_MS = 3000;
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
   if (text != null) node.textContent = text;
   return node;
+}
+
+function svgEl(tag, attrs) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  return node;
+}
+
+// Small inline spider used for the scuttle easter egg (round body + 8 legs).
+function buildSpiderSvg() {
+  const svg = svgEl('svg', { viewBox: '0 0 24 24' });
+  const g = svgEl('g', { fill: 'none', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round' });
+  const legs = [
+    'M4 8 L9 11', 'M4 11 L9 12', 'M4 14 L9 13', 'M4 17 L9 15',
+    'M20 8 L15 11', 'M20 11 L15 12', 'M20 14 L15 13', 'M20 17 L15 15',
+  ];
+  for (const d of legs) g.append(svgEl('path', { d }));
+  svg.append(g);
+  svg.append(svgEl('circle', { cx: '12', cy: '13', r: '3', fill: 'currentColor' }));
+  svg.append(svgEl('circle', { cx: '12', cy: '9', r: '2', fill: 'currentColor' }));
+  return svg;
 }
 
 function demoButton({ id, icon, label, value, caption }) {
@@ -35,8 +61,50 @@ function setupMic() {
     id: 'mic', icon: '🎙️', label: 'Mic', value: 'Live', caption: 'Discord plugin',
   });
   let muted = false;
+  let holdTimer = null;
+  let dropTriggered = false;
   btn.setAttribute('aria-pressed', 'false');
+
+  const startHold = () => {
+    if (holdTimer) return;
+    holdTimer = setTimeout(() => {
+      holdTimer = null;
+      dropTriggered = true;
+      if (!prefersReducedMotion) btn.classList.add('mic-drop');
+      showToast('🎤 mic drop');
+    }, MIC_HOLD_MS);
+  };
+  const cancelHold = () => {
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+  };
+
+  btn.addEventListener('pointerdown', (e) => {
+    btn.setPointerCapture?.(e.pointerId);
+    startHold();
+  });
+  btn.addEventListener('pointerup', cancelHold);
+  btn.addEventListener('pointercancel', cancelHold);
+  btn.addEventListener('pointerleave', cancelHold);
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
+    if (e.repeat) return;
+    if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') startHold();
+  });
+  btn.addEventListener('keyup', (e) => {
+    if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter') cancelHold();
+  });
+  btn.addEventListener('blur', cancelHold);
+  btn.addEventListener('animationend', (e) => {
+    if (e.animationName === 'mic-drop') btn.classList.remove('mic-drop');
+  });
   btn.addEventListener('click', () => {
+    if (dropTriggered) {
+      dropTriggered = false;
+      return;
+    }
     muted = !muted;
     btn.setAttribute('aria-pressed', String(muted));
     btn.classList.toggle('is-muted', muted);
@@ -126,7 +194,7 @@ function setupHold() {
   return btn;
 }
 
-function setupCpu(reducedMotion, deck) {
+function setupCpu(deck) {
   const { btn, valueSpan } = demoButton({
     id: 'cpu', icon: '🌡️', label: 'CPU', value: '45°C', caption: 'Hardware Monitor',
   });
@@ -135,7 +203,7 @@ function setupCpu(reducedMotion, deck) {
     btn.classList.add('flash');
     setTimeout(() => btn.classList.remove('flash'), 150);
   });
-  if (!reducedMotion) {
+  if (!prefersReducedMotion) {
     let timer = null;
     const tick = () => {
       const delta = Math.round(Math.random() * 8 - 4);
@@ -158,26 +226,25 @@ function setupCpu(reducedMotion, deck) {
 function renderDemoDeck() {
   const deck = document.getElementById('demo-deck');
   if (!deck) return;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   deck.append(
     setupMic(),
     setupStatus(),
     setupScene(),
     setupGauge(),
     setupHold(),
-    setupCpu(reducedMotion, deck),
+    setupCpu(deck),
   );
 }
 
 let activeToast = null;
 let toastTimer = null;
 
-function showToast() {
+function showToast(text) {
   if (activeToast) {
     clearTimeout(toastTimer);
     activeToast.remove();
   }
-  const toast = el('div', 'toast', 'Page 2 unlocked 🕷️');
+  const toast = el('div', 'toast', text);
   toast.setAttribute('role', 'status');
   document.body.append(toast);
   activeToast = toast;
@@ -189,9 +256,10 @@ function showToast() {
 }
 
 function flipPage() {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reducedMotion) {
-    showToast();
+  const spooky = document.documentElement.classList.contains('spooky');
+  const message = spooky ? 'Page 2 unlocked 🎃' : 'Page 2 unlocked 🕷️';
+  if (prefersReducedMotion) {
+    showToast(message);
     return;
   }
   const grid = document.getElementById('repo-grid');
@@ -202,7 +270,7 @@ function flipPage() {
     grid?.classList.remove('page-flip');
     deck?.classList.remove('page-flip');
   }, 700);
-  showToast();
+  showToast(message);
 }
 
 function setupKonami() {
@@ -214,5 +282,55 @@ function setupKonami() {
   });
 }
 
+// Avatar spider: 5 fast clicks on the avatar sends a little spider scuttling across the bottom.
+const SCUTTLE_SAFETY_MS = 4000;
+
+function scuttleSpider() {
+  if (document.querySelector('.scuttle')) return;
+  if (prefersReducedMotion) {
+    showToast('🕷️ eek');
+    return;
+  }
+  const scuttle = el('div', 'scuttle');
+  scuttle.setAttribute('aria-hidden', 'true');
+  scuttle.append(buildSpiderSvg());
+  document.body.append(scuttle);
+  let removed = false;
+  const remove = () => {
+    if (removed) return;
+    removed = true;
+    scuttle.remove();
+  };
+  scuttle.addEventListener('animationend', (e) => {
+    if (e.animationName === 'scuttle-across') remove();
+  });
+  setTimeout(remove, SCUTTLE_SAFETY_MS);
+}
+
+function setupAvatarSpider() {
+  const target = document.querySelector('.avatar-wrap') ?? document.querySelector('.avatar');
+  if (!target) return;
+  const click = rapidClicks(5, 2000);
+  target.addEventListener('click', () => {
+    if (click(Date.now())) scuttleSpider();
+  });
+}
+
+// Console hello: a little ASCII spider, once per page load.
+const SPIDER_ART = [
+  '   /\\_/\\',
+  '  ( o.o )',
+  ' > ^  ^ <',
+].join('\n');
+
+function logConsoleHello() {
+  console.log(
+    `%c${SPIDER_ART}\n\nBuild your own Touch Portal plugin → npm i touchportal-api\nhttps://github.com/spdermn02/touchportal-node-api`,
+    'font-family: monospace; font-size: 12px; color: #f5a524; line-height: 1.3;',
+  );
+}
+
 renderDemoDeck();
 setupKonami();
+setupAvatarSpider();
+logConsoleHello();

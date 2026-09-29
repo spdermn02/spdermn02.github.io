@@ -17,6 +17,8 @@ import {
   drift,
   KONAMI,
   konamiMatcher,
+  isSpooky,
+  rapidClicks,
 } from '../lib.js';
 
 const raw = (overrides = {}) => ({
@@ -359,4 +361,53 @@ test('konamiMatcher still matches with an extra leading key', () => {
   push('ArrowUp');
   const results = KONAMI.map((key) => push(key));
   assert.equal(results.at(-1), true);
+});
+
+// --- Spooky mode ---
+
+test('isSpooky is false the moment before October (local time)', () => {
+  assert.equal(isSpooky(new Date(2026, 8, 30, 23, 59)), false);
+});
+
+test('isSpooky is true at the start of October (local time)', () => {
+  assert.equal(isSpooky(new Date(2026, 9, 1, 0, 0)), true);
+});
+
+test('isSpooky is true at the end of October (local time)', () => {
+  assert.equal(isSpooky(new Date(2026, 9, 31, 23, 59)), true);
+});
+
+test('isSpooky is false once November starts (local time)', () => {
+  assert.equal(isSpooky(new Date(2026, 10, 1)), false);
+});
+
+test('isSpooky is true outside October when ?spooky is in the query', () => {
+  assert.equal(isSpooky(new Date(2026, 2, 1), '?spooky'), true);
+});
+
+test('isSpooky is false outside October for unrelated query params', () => {
+  assert.equal(isSpooky(new Date(2026, 2, 1), '?foo=1'), false);
+});
+
+// --- Rapid clicks ---
+
+test('rapidClicks(5, 2000) is true only on the 5th click within the window', () => {
+  const click = rapidClicks(5, 2000);
+  const results = [0, 400, 800, 1200, 1600].map((t) => click(t));
+  assert.deepEqual(results, [false, false, false, false, true]);
+});
+
+test('rapidClicks(5, 2000) is false when clicks are spread too far apart', () => {
+  const click = rapidClicks(5, 2000);
+  const results = [0, 700, 1400, 2100, 2800].map((t) => click(t));
+  assert.deepEqual(results, [false, false, false, false, false]);
+});
+
+test('rapidClicks resets after returning true', () => {
+  const click = rapidClicks(5, 2000);
+  const first = [0, 400, 800, 1200, 1600].map((t) => click(t));
+  assert.deepEqual(first, [false, false, false, false, true]);
+  const second = [1650, 1700, 1750, 1800].map((t) => click(t));
+  assert.deepEqual(second, [false, false, false, false]);
+  assert.equal(click(1850), true);
 });

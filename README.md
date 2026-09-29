@@ -8,7 +8,7 @@ Static HTML/CSS/JS with no build step and no dependencies. Repo stats load live 
 and npm APIs. Repo cards show shields.io downloads/release badges, a status LED for how recently
 each repo was pushed, a "More for Touch Portal" list rounds out the rest of the plugins below the
 grid, a small demo deck lets you press some buttons and see what the plugins actually do (and a
-secret), and there's a Ko-fi link in the header and footer for anyone who wants to chip in.
+few secrets), and there's a Ko-fi link in the header and footer for anyone who wants to chip in.
 `snapshot.js` renders first and stays in place for any request that fails (e.g. GitHub's 60 req/hr
 unauthenticated rate limit).
 
@@ -36,6 +36,7 @@ npm test        # node:test, Node 18+
 | `lib.js` | Pure helpers: repo filtering, name formatting, response parsing, fetch timeout |
 | `snapshot.js` | Fallback data rendered before live data arrives |
 | `fun.js` | Demo deck + Konami easter egg |
+| `seasonal.js` | October spooky mode (preview any time with `?spooky`) |
 | `tests/` | Unit tests for `lib.js` and `snapshot.js` |
 | `favicon.svg` | Tab icon |
 | `404.html` | Not-found page (GitHub Pages serves it for any missing path) |

@@ -162,6 +162,24 @@ export function konamiMatcher(sequence = KONAMI) {
   };
 }
 
+export function isSpooky(date = new Date(), search = '') {
+  if (new URLSearchParams(search).has('spooky')) return true;
+  return date.getMonth() === 9;
+}
+
+export function rapidClicks(count = 5, windowMs = 2000) {
+  let clicks = [];
+  return function click(now) {
+    clicks = clicks.filter((t) => now - t <= windowMs);
+    clicks.push(now);
+    if (clicks.length >= count) {
+      clicks = [];
+      return true;
+    }
+    return false;
+  };
+}
+
 export async function fetchJson(url, { timeoutMs = 5000, fetchImpl = globalThis.fetch } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);

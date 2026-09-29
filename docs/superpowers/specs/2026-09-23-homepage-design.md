@@ -37,6 +37,7 @@ app.js         DOM rendering, copy button, live fetches (renders the page)
 lib.js         pure helpers: repo filtering/sorting, name formatting, URL safety, parsers, fetch timeout
 snapshot.js    SNAPSHOT data rendered first and kept when a fetch fails
 fun.js         demo deck (six pressable buttons) + Konami easter egg
+seasonal.js    October spooky mode (?spooky preview)
 favicon.svg    tab icon
 404.html       not-found page (absolute asset paths; served by Pages for any missing path)
 404.js         404 "map this button" easter egg
@@ -89,7 +90,12 @@ pure client-side state:
 
 Value changes are announced via `aria-live="polite"`.
 
-**Easter egg:** a certain classic key sequence unlocks a little surprise — try it.
+**Easter eggs:** a few small surprises are hidden around the page — try things out.
+
+### Seasonal
+
+October gets a light spooky mode (a cobweb in the header, a little dangling spider by the avatar,
+a pumpkin-colored active LED); preview it any time with `?spooky` regardless of the month.
 
 ### 3. Top Repos Grid
 
