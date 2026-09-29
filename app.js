@@ -13,6 +13,8 @@ import {
   sameRepos,
   downloadsBadgeUrl,
   releaseBadgeUrl,
+  ledState,
+  LED_LABELS,
 } from './lib.js';
 
 // All API-derived text goes through textContent; never parse HTML strings here.
@@ -55,6 +57,15 @@ function badge(url, alt) {
   return img;
 }
 
+function led(repo) {
+  const state = ledState(repo.pushedAt);
+  const label = LED_LABELS[state];
+  const dot = el('span', `led led-${state}`);
+  dot.title = label;
+  dot.append(el('span', 'sr-only', label));
+  return dot;
+}
+
 function badges(repo) {
   if (!released.has(repo.name)) return null;
   const wrap = el('span', 'deck-badges');
@@ -69,7 +80,7 @@ function repoCard(repo) {
   const card = el('a', 'deck-card');
   card.href = repo.url;
   card.rel = 'noopener';
-  card.append(el('h3', 'deck-title', displayName(repo.name)), el('code', 'deck-raw', repo.name));
+  card.append(led(repo), el('h3', 'deck-title', displayName(repo.name)), el('code', 'deck-raw', repo.name));
   if (repo.description) card.append(el('p', 'deck-desc', repo.description));
   const meta = el('div', 'deck-meta');
   meta.append(stat('★', formatCount(repo.stars), 'stars'));
@@ -84,7 +95,7 @@ function moreRow(repo) {
   const row = el('a', 'more-row');
   row.href = repo.url;
   row.rel = 'noopener';
-  row.append(el('span', 'more-name', displayName(repo.name)));
+  row.append(led(repo), el('span', 'more-name', displayName(repo.name)));
   if (repo.description) row.append(el('span', 'more-desc', repo.description));
   const b = badges(repo);
   if (b) row.append(b);

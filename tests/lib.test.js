@@ -10,6 +10,13 @@ import {
   downloadsBadgeUrl,
   releaseBadgeUrl,
   pickMoreRepos,
+  ledState,
+  LED_LABELS,
+  cycle,
+  gaugeStep,
+  drift,
+  KONAMI,
+  konamiMatcher,
 } from '../lib.js';
 
 const raw = (overrides = {}) => ({
@@ -242,4 +249,114 @@ test('pickMoreRepos has no limit', () => {
   const many = Array.from({ length: 20 }, (_, i) =>
     raw({ name: `TouchPortal_Repo${i}`, stargazers_count: i }));
   assert.equal(pickMoreRepos(many, []).length, 20);
+});
+
+// --- Status LEDs ---
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const NOW = Date.parse('2026-09-29T00:00:00Z');
+const daysAgo = (n) => new Date(NOW - n * DAY_MS).toISOString();
+
+test('ledState is active within 90 days, inclusive of exactly 90', () => {
+  assert.equal(ledState(daysAgo(10), NOW), 'active');
+  assert.equal(ledState(daysAgo(90), NOW), 'active');
+});
+
+test('ledState is recent from 91 to 365 days', () => {
+  assert.equal(ledState(daysAgo(91), NOW), 'recent');
+  assert.equal(ledState(daysAgo(365), NOW), 'recent');
+});
+
+test('ledState is idle beyond 365 days', () => {
+  assert.equal(ledState(daysAgo(366), NOW), 'idle');
+});
+
+test('ledState is idle for non-string or unparseable input', () => {
+  assert.equal(ledState('', NOW), 'idle');
+  assert.equal(ledState(null, NOW), 'idle');
+  assert.equal(ledState('garbage', NOW), 'idle');
+});
+
+test('LED_LABELS has a label for each state', () => {
+  assert.deepEqual(LED_LABELS, {
+    active: 'Updated within 90 days',
+    recent: 'Updated this year',
+    idle: 'Not updated in over a year',
+  });
+});
+
+// --- Demo deck state helpers ---
+
+test('cycle advances to the next option and wraps', () => {
+  assert.equal(cycle(['a', 'b', 'c'], 'a'), 'b');
+  assert.equal(cycle(['a', 'b', 'c'], 'c'), 'a');
+});
+
+test('cycle falls back to the first option when current is not found', () => {
+  assert.equal(cycle(['a', 'b', 'c'], 'nope'), 'a');
+});
+
+test('gaugeStep adds the step and wraps to 0 past 100', () => {
+  assert.equal(gaugeStep(0), 20);
+  assert.equal(gaugeStep(80), 100);
+  assert.equal(gaugeStep(100), 0);
+});
+
+test('gaugeStep respects a custom step', () => {
+  assert.equal(gaugeStep(10, 5), 15);
+});
+
+test('drift adds delta and clamps to [min, max], rounded', () => {
+  assert.equal(drift(50, 10), 60);
+  assert.equal(drift(88, 10), 90);
+  assert.equal(drift(22, -10), 20);
+  assert.equal(drift(50.4, 0.4), 51);
+});
+
+test('drift respects custom min/max', () => {
+  assert.equal(drift(5, -10, 0, 10), 0);
+  assert.equal(drift(5, 10, 0, 10), 10);
+});
+
+// --- Konami matcher ---
+
+test('konamiMatcher returns true only on the key that completes the sequence', () => {
+  const push = konamiMatcher();
+  const results = KONAMI.map((key) => push(key));
+  assert.deepEqual(results, [
+    false, false, false, false, false, false, false, false, false, true,
+  ]);
+});
+
+test('konamiMatcher resets after a match and can match again', () => {
+  const push = konamiMatcher();
+  KONAMI.forEach((key) => push(key));
+  const results = KONAMI.map((key) => push(key));
+  assert.deepEqual(results, [
+    false, false, false, false, false, false, false, false, false, true,
+  ]);
+});
+
+test('konamiMatcher recovers from an interrupted sequence', () => {
+  const push = konamiMatcher();
+  push('ArrowUp');
+  push('x');
+  push('y');
+  const results = KONAMI.map((key) => push(key));
+  assert.equal(results.at(-1), true);
+  assert.deepEqual(results.slice(0, -1), results.slice(0, -1).map(() => false));
+});
+
+test('konamiMatcher is case-insensitive for the b/a letters', () => {
+  const push = konamiMatcher();
+  const upper = KONAMI.map((k) => (k.length === 1 ? k.toUpperCase() : k));
+  const results = upper.map((key) => push(key));
+  assert.equal(results.at(-1), true);
+});
+
+test('konamiMatcher still matches with an extra leading key', () => {
+  const push = konamiMatcher();
+  push('ArrowUp');
+  const results = KONAMI.map((key) => push(key));
+  assert.equal(results.at(-1), true);
 });

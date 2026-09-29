@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="robots" content="noindex">
   <title>Page not found · spdermn02</title>
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e0f13">
@@ -13,12 +13,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap">
   <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/404.js"></script>
 </head>
 <body>
   <main class="page notfound">
     <p class="eyebrow">404</p>
     <h1>This button isn't mapped.</h1>
     <p class="notfound-text">Nothing lives at this address. It may have moved, or the link has a typo.</p>
+    <button id="map-btn" type="button" class="demo-btn map-btn">
+      <span class="demo-icon" aria-hidden="true">🔘</span>
+      <span class="demo-label">Unmapped</span>
+      <span class="demo-value">press to map</span>
+    </button>
     <div class="featured-links">
       <a class="btn btn-primary" href="/">Back to the homepage</a>
       <a class="btn" href="https://github.com/spdermn02?tab=repositories" rel="noopener">All repos on GitHub</a>

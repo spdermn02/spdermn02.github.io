@@ -33,11 +33,13 @@ most-starred repositories and spotlights the Touch Portal Node API (`touchportal
 ```
 index.html     markup, CSP, meta + Open Graph tags, font links
 styles.css     design tokens, layout, dark/light themes, motion
-app.js         DOM rendering, copy button, live fetches (only file touching the DOM)
+app.js         DOM rendering, copy button, live fetches (renders the page)
 lib.js         pure helpers: repo filtering/sorting, name formatting, URL safety, parsers, fetch timeout
 snapshot.js    SNAPSHOT data rendered first and kept when a fetch fails
+fun.js         demo deck (six pressable buttons) + Konami easter egg
 favicon.svg    tab icon
 404.html       not-found page (absolute asset paths; served by Pages for any missing path)
+404.js         404 "map this button" easter egg
 og.png         social share image (1200x630)
 tools/         source for the share image (og-card.html)
 package.json   test/serve scripts, no dependencies
@@ -71,12 +73,32 @@ Full-width card with accent border, visually distinct from the grid.
   - **GitHub** → `https://github.com/spdermn02/touchportal-node-api`
   - **Docs** → `https://github.com/spdermn02/touchportal-node-api#readme` (wiki is empty)
 
+### 2b. Try the deck
+
+A small demo deck between the featured card and the Top Repos grid: "Press some buttons" with a
+one-line caption. Six real buttons, each a tiny taste of what a plugin does — no live data, just
+pure client-side state:
+
+- **Mic** 🎙️ — toggles Live/Muted (Discord plugin).
+- **Status** 🟢/🌙/⛔ — cycles Online → Idle → Do Not Disturb, icon follows (Discord plugin).
+- **Scene** 🎬 — cycles Scene 1 → 2 → 3 (page & scene switching).
+- **Gauge** 📊 — steps 0–100% in 20% increments with a fill bar (Dynamic Icons).
+- **Hold** ⏱️ — counts up while held, resets on release (AdvancedHold plugin).
+- **CPU** 🌡️ — drifts a few degrees every couple seconds while the deck is on screen (Hardware
+  Monitor); static under reduced motion.
+
+Value changes are announced via `aria-live="polite"`.
+
+**Easter egg:** a certain classic key sequence unlocks a little surprise — try it.
+
 ### 3. Top Repos Grid
 
 - The 6 most-starred repos owned by spdermn02, **excluding** forks, archived repos, and
   `touchportal-node-api` (already featured). Ties broken by most recently pushed.
 - Each card is an `<a>` to the repo `html_url`, styled like a rounded Touch Portal deck button.
 - Card content:
+  - A status LED (top-right corner): green = pushed within 90 days, amber = within the last year,
+    dim = older, derived from `pushed_at`. Labelled for screen readers; never the only signal.
   - Display name — derived from repo name: strip a leading `TouchPortal`/`touchportal` prefix and
     its separator (`_` or `-`), then replace remaining `_`/`-` with spaces.
     e.g. `TouchPortal_Discord_Plugin` → "Discord Plugin", `TouchPortal-HardwareMonitor` →
@@ -98,6 +120,7 @@ Full-width card with accent border, visually distinct from the grid.
   Section (and its heading) is hidden entirely when the list is empty.
 - Each row links to the repo and shows its display name, description (omitted if null), and —
   only for repos that ship GitHub releases — the same downloads + release badges as the grid.
+  Each row also starts with the same status LED as the grid cards.
 
 ### 4. Footer
 

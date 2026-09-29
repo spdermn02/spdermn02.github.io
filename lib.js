@@ -109,6 +109,59 @@ export function parseVersion(json) {
   return typeof v === 'string' && SEMVER.test(v) ? v : null;
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export const LED_LABELS = {
+  active: 'Updated within 90 days',
+  recent: 'Updated this year',
+  idle: 'Not updated in over a year',
+};
+
+export function ledState(pushedAt, now = Date.now()) {
+  if (typeof pushedAt !== 'string') return 'idle';
+  const then = Date.parse(pushedAt);
+  if (Number.isNaN(then)) return 'idle';
+  const days = (now - then) / DAY_MS;
+  if (days <= 90) return 'active';
+  if (days <= 365) return 'recent';
+  return 'idle';
+}
+
+export function cycle(options, current) {
+  const i = options.indexOf(current);
+  return i === -1 ? options[0] : options[(i + 1) % options.length];
+}
+
+export function gaugeStep(value, step = 20) {
+  const next = value + step;
+  return next > 100 ? 0 : next;
+}
+
+export function drift(value, delta, min = 20, max = 90) {
+  return Math.round(Math.min(max, Math.max(min, value + delta)));
+}
+
+export const KONAMI = [
+  'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+  'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a',
+];
+
+const normKey = (key) => (key.length === 1 ? key.toLowerCase() : key);
+
+export function konamiMatcher(sequence = KONAMI) {
+  const seq = sequence.map(normKey);
+  let buffer = [];
+  return function push(key) {
+    buffer.push(normKey(key));
+    if (buffer.length > seq.length) buffer.shift();
+    if (buffer.length === seq.length && buffer.every((k, i) => k === seq[i])) {
+      buffer = [];
+      return true;
+    }
+    return false;
+  };
+}
+
 export async function fetchJson(url, { timeoutMs = 5000, fetchImpl = globalThis.fetch } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);

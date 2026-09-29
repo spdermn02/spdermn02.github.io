@@ -5,10 +5,12 @@ Personal homepage for spdermn02: Touch Portal plugins & tools, plus the
 Live at <https://spdermn02.github.io>.
 
 Static HTML/CSS/JS with no build step and no dependencies. Repo stats load live from the GitHub
-and npm APIs. Repo cards show shields.io downloads/release badges, a "More for Touch Portal" list
-rounds out the rest of the plugins below the grid, and there's a Ko-fi link in the header and
-footer for anyone who wants to chip in. `snapshot.js` renders first and stays in place for any
-request that fails (e.g. GitHub's 60 req/hr unauthenticated rate limit).
+and npm APIs. Repo cards show shields.io downloads/release badges, a status LED for how recently
+each repo was pushed, a "More for Touch Portal" list rounds out the rest of the plugins below the
+grid, a small demo deck lets you press some buttons and see what the plugins actually do (and a
+secret), and there's a Ko-fi link in the header and footer for anyone who wants to chip in.
+`snapshot.js` renders first and stays in place for any request that fails (e.g. GitHub's 60 req/hr
+unauthenticated rate limit).
 
 ## Run locally
 
@@ -30,12 +32,14 @@ npm test        # node:test, Node 18+
 |---|---|
 | `index.html` | Markup, CSP, meta tags |
 | `styles.css` | Theme tokens, layout, dark/light |
-| `app.js` | Rendering + live data fetches (only file touching the DOM) |
+| `app.js` | Rendering + live data fetches (renders the page) |
 | `lib.js` | Pure helpers: repo filtering, name formatting, response parsing, fetch timeout |
 | `snapshot.js` | Fallback data rendered before live data arrives |
+| `fun.js` | Demo deck + Konami easter egg |
 | `tests/` | Unit tests for `lib.js` and `snapshot.js` |
 | `favicon.svg` | Tab icon |
 | `404.html` | Not-found page (GitHub Pages serves it for any missing path) |
+| `404.js` | 404 "map this button" |
 | `tools/og-card.html` | Source for the social share image |
 | `og.png` | Social share image |
 | `package.json` | `test` / `serve` scripts only, no dependencies |
