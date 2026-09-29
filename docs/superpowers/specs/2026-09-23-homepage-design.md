@@ -37,6 +37,7 @@ app.js         DOM rendering, copy button, live fetches (only file touching the 
 lib.js         pure helpers: repo filtering/sorting, name formatting, URL safety, parsers, fetch timeout
 snapshot.js    SNAPSHOT data rendered first and kept when a fetch fails
 favicon.svg    tab icon
+404.html       not-found page (absolute asset paths; served by Pages for any missing path)
 og.png         social share image (1200x630)
 tools/         source for the share image (og-card.html)
 package.json   test/serve scripts, no dependencies

@@ -35,6 +35,7 @@ npm test        # node:test, Node 18+
 | `snapshot.js` | Fallback data rendered before live data arrives |
 | `tests/` | Unit tests for `lib.js` and `snapshot.js` |
 | `favicon.svg` | Tab icon |
+| `404.html` | Not-found page (GitHub Pages serves it for any missing path) |
 | `tools/og-card.html` | Source for the social share image |
 | `og.png` | Social share image |
 | `package.json` | `test` / `serve` scripts only, no dependencies |
@@ -43,18 +44,35 @@ npm test        # node:test, Node 18+
 
 ## Refreshing the snapshot
 
-Star counts in `snapshot.js` drift over time. The page corrects them live, but refresh the snapshot
-now and then:
+`snapshot.js` renders first and is the fallback when the APIs fail. The page corrects star counts,
+the top 6 and the More list live, but refresh the snapshot now and then. **`released` is the one
+list that never updates itself**: it decides which repos get downloads/release badges, so a plugin
+that ships its first stable release won't get badges until you add it here.
+
+Top 6 (`SNAPSHOT.repos`) and More list (`SNAPSHOT.more`):
 
 ```bash
 gh api 'users/spdermn02/repos?per_page=100&type=owner' | jq '[.[]
   | select(.fork == false and .archived == false and .name != "touchportal-node-api")]
-  | sort_by(.stargazers_count, .pushed_at) | reverse | .[:6]
-  | map({name, description, stars: .stargazers_count, language, url: .html_url, pushedAt: .pushed_at})'
+  | sort_by(.stargazers_count, .pushed_at) | reverse
+  | {repos: .[:6], more: (.[6:] | map(select(.name | test("^touchportal"; "i"))))}
+  | map_values(map({name, description, stars: .stargazers_count, language, url: .html_url, pushedAt: .pushed_at}))'
 ```
 
-Paste the result into `SNAPSHOT.repos`, update `featured.stars`, `npm.downloads`, `npm.version`,
-and `date`, then run `npm test`.
+Repos with at least one **stable** release (`SNAPSHOT.released`). Pre-releases don't count
+because the shields release badge ignores them and would show "no releases found":
+
+```bash
+gh api 'users/spdermn02/repos?per_page=100&type=owner' \
+  --jq '.[] | select(.fork == false and .archived == false and (.name | test("^touchportal"; "i")) and .name != "touchportal-node-api") | .name' |
+  while read -r r; do
+    gh api "repos/spdermn02/$r/releases?per_page=100" \
+      --jq "if any(.[]; .draft == false and .prerelease == false) then \"$r\" else empty end"
+  done
+```
+
+Paste the results into `SNAPSHOT.repos`, `SNAPSHOT.more` and `SNAPSHOT.released`, update
+`featured.stars`, `npm.downloads`, `npm.version` and `date`, then run `npm test`.
 
 ## Share image
 
